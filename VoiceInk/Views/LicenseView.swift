@@ -5,43 +5,34 @@ struct LicenseView: View {
     
     var body: some View {
         VStack(spacing: 15) {
-            Text("License Management")
+            Text("License Status")
                 .font(.headline)
             
-            if case .licensed = licenseViewModel.licenseState {
-                VStack(spacing: 10) {
-                    Text("Premium Features Activated")
+            // Always show licensed status since app is open source
+            VStack(spacing: 10) {
+                HStack {
+                    Image(systemName: "checkmark.circle.fill")
                         .foregroundColor(.green)
-                    
-                    Button(role: .destructive, action: {
-                        licenseViewModel.removeLicense()
-                    }) {
-                        Text("Remove License")
-                    }
+                        .font(.system(size: 20))
+                    Text("Open Source Version - All Features Unlocked")
+                        .foregroundColor(.green)
+                        .font(.subheadline)
                 }
-            } else {
-                TextField("Enter License Key", text: $licenseViewModel.licenseKey)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .frame(maxWidth: 300)
+                
+                Text("This is the open source version of VoiceInk with all premium features available.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
                 
                 Button(action: {
-                    Task {
-                        await licenseViewModel.validateLicense()
+                    if let url = URL(string: "https://github.com/Beingpax/VoiceInk") {
+                        NSWorkspace.shared.open(url)
                     }
                 }) {
-                    if licenseViewModel.isValidating {
-                        ProgressView()
-                    } else {
-                        Text("Activate License")
-                    }
+                    Text("View on GitHub")
+                        .font(.caption)
                 }
-                .disabled(licenseViewModel.isValidating)
-            }
-            
-            if let message = licenseViewModel.validationMessage {
-                Text(message)
-                    .foregroundColor(licenseViewModel.licenseState == .licensed ? .green : .red)
-                    .font(.caption)
+                .buttonStyle(.link)
             }
         }
         .padding()

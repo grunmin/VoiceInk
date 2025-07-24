@@ -73,15 +73,14 @@ struct DynamicSidebar: View {
                 Text("VoiceInk")
                     .font(.system(size: 14, weight: .semibold))
                 
-                if case .licensed = licenseViewModel.licenseState {
-                    Text("PRO")
-                        .font(.system(size: 9, weight: .heavy))
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 4)
-                        .padding(.vertical, 2)
-                        .background(Color.blue)
-                        .cornerRadius(4)
-                }
+                // Show Open Source badge instead of Pro badge
+                Text("OPEN SOURCE")
+                    .font(.system(size: 8, weight: .heavy))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 2)
+                    .background(Color.green)
+                    .cornerRadius(4)
                 
                 Spacer()
             }
