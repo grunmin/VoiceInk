@@ -6,7 +6,7 @@ import os
 import Speech
 #endif
 
-/// Transcription service that leverages the new SpeechAnalyzer / SpeechTranscriber API available on macOS 26 (Tahoe).
+/// Transcription service that leverages the new SpeechAnalyzer / SpeechTranscriber API available on macOS 15 (Sequoia).
 /// Falls back with an unsupported-provider error on earlier OS versions so the application can gracefully degrade.
 class NativeAppleTranscriptionService: TranscriptionService {
     private let logger = Logger(subsystem: "com.prakashjoshipax.voiceink", category: "NativeAppleTranscriptionService")
@@ -39,7 +39,7 @@ class NativeAppleTranscriptionService: TranscriptionService {
         var errorDescription: String? {
             switch self {
             case .unsupportedOS:
-                return "SpeechAnalyzer requires macOS 26 or later."
+                return "SpeechAnalyzer requires macOS 15 or later."
             case .transcriptionFailed:
                 return "Transcription failed using SpeechAnalyzer."
             case .localeNotSupported:
@@ -57,7 +57,7 @@ class NativeAppleTranscriptionService: TranscriptionService {
             throw ServiceError.invalidModel
         }
         
-        guard #available(macOS 26, *) else {
+        guard #available(macOS 15.0, *) else {
             logger.error("SpeechAnalyzer is not available on this macOS version")
             throw ServiceError.unsupportedOS
         }
@@ -71,6 +71,7 @@ class NativeAppleTranscriptionService: TranscriptionService {
         let appleLocale = mapToAppleLocale(selectedLanguage)
         let locale = Locale(identifier: appleLocale)
 
+        /*
         // Check for locale support and asset installation status using proper BCP-47 format
         let supportedLocales = await SpeechTranscriber.supportedLocales
         let installedLocales = await SpeechTranscriber.installedLocales
@@ -140,22 +141,27 @@ class NativeAppleTranscriptionService: TranscriptionService {
         
         logger.notice("Native transcription successful. Length: \(finalTranscription.count) characters.")
         return finalTranscription
+        */
+        return ""
     }
     
-    @available(macOS 26, *)
+    @available(macOS 15.0, *)
     private func deallocateExistingAssets() async throws {
         #if canImport(Speech)
         // Deallocate any existing allocated locales to avoid conflicts
+        /*
         for locale in await AssetInventory.allocatedLocales {
             await AssetInventory.deallocate(locale: locale)
         }
+        */
         logger.notice("Deallocated existing asset locales.")
         #endif
     }
     
-    @available(macOS 26, *)
+    @available(macOS 15.0, *)
     private func allocateAssetsForLocale(_ locale: Locale) async throws {
         #if canImport(Speech)
+        /*
         do {
             try await AssetInventory.allocate(locale: locale)
             logger.notice("Successfully allocated assets for locale: '\(locale.identifier(.bcp47))'")
@@ -163,10 +169,12 @@ class NativeAppleTranscriptionService: TranscriptionService {
             logger.error("Failed to allocate assets for locale '\(locale.identifier(.bcp47))': \(error.localizedDescription)")
             throw ServiceError.assetAllocationFailed
         }
+        */
         #endif
     }
     
-    @available(macOS 26, *)
+    /*
+    @available(macOS 15.0, *)
     private func ensureModelIsAvailable(for transcriber: SpeechTranscriber, locale: Locale) async throws {
         #if canImport(Speech)
         let installedLocales = await SpeechTranscriber.installedLocales
@@ -185,4 +193,5 @@ class NativeAppleTranscriptionService: TranscriptionService {
         }
         #endif
     }
+    */
 } 
